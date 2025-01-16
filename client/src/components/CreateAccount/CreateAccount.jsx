@@ -2,85 +2,100 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const CreateAccount = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    lastName: '',
-    accountNumber: '',
-    idNumber: '',
-    passportPhoto: null,
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [personalId, setPersonalId] = useState('');
+  const [passportPhoto, setPassportPhoto] = useState(null);
 
   const handleFileChange = (e) => {
-    setFormData({
-      ...formData,
-      passportPhoto: e.target.files[0],
-    });
+    setPassportPhoto(e.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    for (let key in formData) {
-      data.append(key, formData[key]);
+
+    const formData = new FormData();
+    formData.append('firstName', firstName);
+    formData.append('lastName', lastName);
+    formData.append('accountNumber', accountNumber);
+    formData.append('personalId', personalId);
+    if (passportPhoto) {
+      formData.append('passportPhoto', passportPhoto);
     }
-    axios.post('/api/accounts', data)
-      .then(response => {
-        alert('Sukurta paskyra');
-      })
-      .catch(error => console.error(error));
+
+    try {
+      const response = await axios.post('http://localhost:3000/accounts', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      alert(response.data.message); // Сообщение об успешном создании
+    } catch (error) {
+      console.error("Error creating account:", error);
+      alert('Error creating account');
+    }
   };
 
   return (
     <div className="container">
-      <h2>Naujos paskyros sukurymas</h2>
+      <h2>Create Account</h2>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          className="form-control"
-          placeholder="Vardas"
-        />
-        <input
-          type="text"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-          className="form-control"
-          placeholder="Pavardė"
-        />
-        <input
-          type="text"
-          name="accountNumber"
-          value={formData.accountNumber}
-          onChange={handleChange}
-          className="form-control"
-          placeholder="Saskaitos numeris"
-        />
-        <input
-          type="text"
-          name="idNumber"
-          value={formData.idNumber}
-          onChange={handleChange}
-          className="form-control"
-          placeholder="Asmens kodas"
-        />
-        <input
-          type="file"
-          name="passportPhoto"
-          onChange={handleFileChange}
-          className="form-control"
-        />
-        <button type="submit" className="btn btn-primary">Sukurti</button>
+        <div className="form-group">
+          <label htmlFor="firstName">First Name</label>
+          <input
+            type="text"
+            className="form-control"
+            id="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="lastName">Last Name</label>
+          <input
+            type="text"
+            className="form-control"
+            id="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="accountNumber">Account Number</label>
+          <input
+            type="text"
+            className="form-control"
+            id="accountNumber"
+            value={accountNumber}
+            onChange={(e) => setAccountNumber(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="personalId">Personal ID</label>
+          <input
+            type="text"
+            className="form-control"
+            id="personalId"
+            value={personalId}
+            onChange={(e) => setPersonalId(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="passportPhoto">Passport Photo</label>
+          <input
+            type="file"
+            className="form-control"
+            id="passportPhoto"
+            onChange={handleFileChange}
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-primary">Create Account</button>
       </form>
     </div>
   );

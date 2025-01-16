@@ -1,31 +1,38 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import multer from 'multer';
+import path from 'path';
 
 const app = express();
 
-mongoose.connect('mongodb://127.0.0.1:27017/your-database-name')
-  .then(() => console.log('prisijungia prie mngdb'))
-  .catch((err) => console.log('err', err));
+// Папка для загрузки файлов (не используется __dirname)
+const uploadDir = 'ikeltos';  // Просто указываем имя папки
 
-const Post = mongoose.model('Post', {
-  title: String,
-  content: String,
+// Настройка Multer
+const storage = multer.diskStorage({
+    destination: function (req, file, next) {
+        next(null, uploadDir);  // Указываем папку для загрузки
+    },
+    filename: function (req, file, next) {
+        next(null, Date.now() + '.jpg');  // Уникальное имя для каждого файла
+    }
 });
 
+const upload = multer({ storage: storage });
+
+// Middleware для обработки JSON данных
 app.use(express.json());
 
+// Настройка статического ресурса для отображения изображений
+app.use('/nuotraukos', express.static(uploadDir));
 
-app.get('/', async (req, res) => {
-  const posts = await Post.find();
-  res.json(posts);
+// Пример маршрута для загрузки файла
+app.post('/api', upload.single('nuotrauka'), (req, res) => {
+    console.log(req.file); // Информация о загруженном файле
+    console.log(req.body); // Информация из формы (если есть)
+    res.json('Файл успешно загружен');
 });
 
-app.post('/', async (req, res) => {
-  const newPost = new Post(req.body);
-  await newPost.save();
-  res.json({ message: 'irasas sukurtas' });
-});
-
+// Запуск сервера
 app.listen(3000, () => {
-  console.log('veikia');
+    console.log('Сервер работает на порту 3000');
 });
