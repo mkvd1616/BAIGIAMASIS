@@ -2,14 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
-import AccountDetailsPage from './pages/AccountDetailsPage';
-import AccountsPage from './pages/AccountsPage';
-import LoginPage from './pages/LoginPage';
-import Navbar from './components/Navbar';
-import RegisterPage from './pages/RegisterPage';
-import CreateAccountPage from './components/CreateAccountPage/CreateAccountPage';
-import AddFundsPage from './components/AddFundsPage/AddFundsPage';
-import DeductFundsPage from './components/DeductFundsPage/DeductFundsPage';
+import AccountDetailsPage from './components/AccountDetailsPage/AccountDetailsPage.jsx';
+import AccountsPage from './pages/AccountsPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import Navbar from './components/Navbar/Navbar.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
+import CreateAccountPage from './pages/CreateAccountPage.jsx';
+import AddFundsPage from './pages/AddFundsPage.jsx';
+import DeductFundsPage from './pages/DeductFundsPage.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -17,7 +17,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Navbar /> 
       <div className="container">
         <Routes>
-
           <Route path="/" element={<AccountsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -26,8 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/account/:id/add-funds" element={<AddFundsPage />} />
           <Route path="/account/:id/deduct-funds" element={<DeductFundsPage />} />
           <Route path="*" element={<h1>Šis puslapis nebuvo rastas</h1>} />
-        
-          </Routes>
+        </Routes>
       </div>
     </BrowserRouter>
   </React.StrictMode>

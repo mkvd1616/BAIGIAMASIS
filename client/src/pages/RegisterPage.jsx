@@ -7,6 +7,7 @@ const RegisterPage = () => {
   const [personalCode, setPersonalCode] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     fetch('/api/register', {
@@ -16,9 +17,14 @@ const RegisterPage = () => {
       },
       body: JSON.stringify({ email, password, personalCode }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then(err => { throw new Error(err); });
+        }
+        return response.json();
+      })
       .then(() => navigate('/login')) 
-      .catch((error) => setError('err'));
+      .catch((error) => setError(error.message));
   };
 
   return (

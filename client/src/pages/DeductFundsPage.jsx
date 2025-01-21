@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const AddFundsPage = () => {
+const DeductFundsPage = () => {
   const { id } = useParams();
   const [account, setAccount] = useState(null);
   const [amount, setAmount] = useState('');
@@ -12,7 +12,7 @@ const AddFundsPage = () => {
     fetch(`/api/accounts/${id}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch account details');
+          return response.json().then(err => { throw new Error(err); });
         }
         return response.json();
       })
@@ -27,7 +27,7 @@ const AddFundsPage = () => {
       return;
     }
 
-    fetch(`/api/accounts/${id}/add-funds`, {
+    fetch(`/api/accounts/${id}/withdraw`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ const AddFundsPage = () => {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Nepaviko pridėti lėšas');
+          return response.json().then(err => { throw new Error(err); });
         }
         return response.json();
       })
@@ -48,7 +48,7 @@ const AddFundsPage = () => {
 
   return (
     <div>
-      <h1>Pridėti lėšas</h1>
+      <h1>Išimti pinigus</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {account && (
         <div>
@@ -56,10 +56,10 @@ const AddFundsPage = () => {
           <p>Dabartinis balansas: {account.balance} EUR</p>
           <form onSubmit={handleSubmit}>
             <div>
-              <label>Pridedama suma:</label>
+              <label>Išimama suma:</label>
               <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
             </div>
-            <button type="submit">Pridėti</button>
+            <button type="submit">Išimti</button>
           </form>
         </div>
       )}
@@ -67,4 +67,4 @@ const AddFundsPage = () => {
   );
 };
 
-export default AddFundsPage;
+export default DeductFundsPage;

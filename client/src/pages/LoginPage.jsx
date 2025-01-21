@@ -16,13 +16,16 @@ const LoginPage = () => {
       },
       body: JSON.stringify({ email, password }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          navigate('/');
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then(err => { throw new Error(err); });
         }
+        return response.json();
       })
-      .catch((error) => setError('err'));
+      .then(() => {
+        navigate('/');
+      })
+      .catch((error) => setError(error.message));
   };
 
   return (

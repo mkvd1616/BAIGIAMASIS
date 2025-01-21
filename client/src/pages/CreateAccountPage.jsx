@@ -11,7 +11,6 @@ const CreateAccountPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-   
 
     const formData = new FormData();
     formData.append('name', name);
@@ -25,7 +24,7 @@ const CreateAccountPage = () => {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('err');
+          return response.json().then(err => { throw new Error(err); });
         }
         return response.json();
       })
